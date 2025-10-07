@@ -75,7 +75,7 @@ class Queries(object):
 
         for _ in range(60):
             headers = {
-                "Authorization": f"token {self.access_token}",
+                "Authorization": f"Bearer {self.access_token}",
             }
             if params is None:
                 params = dict()
@@ -83,14 +83,17 @@ class Queries(object):
                 path = path[1:]
             try:
                 async with self.semaphore:
+                    print(f"https://api.github.com/{path}")
+                    print(f"headers: {headers}")
+                    print(f"params: {params}")
                     r_async = await self.session.get(
                         f"https://api.github.com/{path}",
                         headers=headers,
                         params=tuple(params.items()),
                     )
                 if r_async.status == 202:
-                    # print(f"{path} returned 202. Retrying...")
-                    print(f"A path returned 202. Retrying...")
+                    print(f"{path} {r_async} returned 202. Retrying...")
+                    print(f"A path returned 202. Retrying....")
                     await asyncio.sleep(2)
                     continue
 
@@ -101,6 +104,9 @@ class Queries(object):
                 print("aiohttp failed for rest query")
                 # Fall back on non-async requests
                 async with self.semaphore:
+                    print(f"https://api.github.com/{path}")
+                    print(f"headers: {headers}")
+                    print(f"params: {params}")
                     r_requests = requests.get(
                         f"https://api.github.com/{path}",
                         headers=headers,
@@ -484,6 +490,7 @@ Languages:
         additions = 0
         deletions = 0
         for repo in await self.repos:
+            await asyncio.sleep(2)
             r = await self.queries.query_rest(f"/repos/{repo}/stats/contributors")
             for author_obj in r:
                 # Handle malformed response from the API by skipping this repo
