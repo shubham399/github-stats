@@ -83,9 +83,6 @@ class Queries(object):
                 path = path[1:]
             try:
                 async with self.semaphore:
-                    print(f"https://api.github.com/{path}")
-                    print(f"headers: {headers}")
-                    print(f"params: {params}")
                     r_async = await self.session.get(
                         f"https://api.github.com/{path}",
                         headers=headers,
@@ -93,7 +90,6 @@ class Queries(object):
                     )
                 if r_async.status == 202:
                     print(f"{path} {r_async} returned 202. Retrying...")
-                    print(f"A path returned 202. Retrying....")
                     await asyncio.sleep(2)
                     continue
 
@@ -104,16 +100,13 @@ class Queries(object):
                 print("aiohttp failed for rest query")
                 # Fall back on non-async requests
                 async with self.semaphore:
-                    print(f"https://api.github.com/{path}")
-                    print(f"headers: {headers}")
-                    print(f"params: {params}")
                     r_requests = requests.get(
                         f"https://api.github.com/{path}",
                         headers=headers,
                         params=tuple(params.items()),
                     )
                     if r_requests.status_code == 202:
-                        print(f"A path returned 202. Retrying...")
+                        print(f"{path} {r_async} returned 202. Retrying...")
                         await asyncio.sleep(2)
                         continue
                     elif r_requests.status_code == 200:
