@@ -85,9 +85,11 @@ For more information on inaccuracies, see issue
    personal access token as the value.
 5. It is possible to change the type of statistics reported by adding other
    repository secrets. 
-   - To ignore certain repos, add them (in owner/name format e.g.,
-     `jstrieb/github-stats`) separated by commas to a new secret—created as
-     before—called `EXCLUDED`.
+   - To ignore certain repos, add them separated by commas to a new secret—created as
+     before—called `EXCLUDED`. You can specify:
+     - Individual repositories: `owner/name` format (e.g., `jstrieb/github-stats`)
+     - All repositories from a user: just the username (e.g., `microsoft`)
+     - Mix both formats: `jstrieb/github-stats,microsoft,google/closure-compiler`
    - To ignore certain languages, add them (separated by commas) to a new
      secret called `EXCLUDED_LANGS`. For example, to exclude HTML and TeX you
      could set the value to `html,tex`.
