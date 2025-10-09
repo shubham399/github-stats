@@ -12,7 +12,8 @@ https://github.community/t/support-theme-context-for-images-in-light-vs-dark-mod
 
 Generate visualizations of GitHub user and repository statistics with GitHub
 Actions. Visualizations can include data for both private repositories, and for
-repositories you have contributed to, but do not own.
+repositories you have contributed to, but do not own. Archived repositories are
+excluded by default to focus on active projects.
 
 Generated images automatically switch between GitHub light theme and GitHub
 dark theme.
@@ -98,6 +99,8 @@ For more information on inaccuracies, see issue
      [main
      workflow](https://github.com/jstrieb/github-stats/blob/master/.github/workflows/main.yml))
      called `EXCLUDE_FORKED_REPOS` with a value of `true`.
+   - **Note**: Archived repositories are automatically excluded from statistics
+     by default to focus on active projects.
    - These other values are added as secrets by default to prevent leaking
      information about private repositories. If you're not worried about that,
      you can change the values directly [in the Actions workflow

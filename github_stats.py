@@ -141,6 +141,7 @@ class Queries(object):
       }}
       nodes {{
         nameWithOwner
+        isArchived
         stargazers {{
           totalCount
         }}
@@ -177,6 +178,7 @@ class Queries(object):
       }}
       nodes {{
         nameWithOwner
+        isArchived
         stargazers {{
           totalCount
         }}
@@ -343,6 +345,10 @@ Languages:
                     continue
                 name = repo.get("nameWithOwner")
                 if name in self._repos:
+                    continue
+                
+                # Exclude archived repositories by default
+                if repo.get("isArchived", False):
                     continue
                 
                 # Check for exact repository match or username-only match
