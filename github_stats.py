@@ -260,6 +260,8 @@ class Stats(object):
     ):
         self.username = username
         self._ignore_forked_repos = ignore_forked_repos
+        # exclude_repos can contain both "username/repo" and "username" patterns
+        # "username" patterns will exclude all repositories from that user
         self._exclude_repos = set() if exclude_repos is None else exclude_repos
         self._exclude_langs = set() if exclude_langs is None else exclude_langs
         self.queries = Queries(username, access_token, session)
@@ -340,7 +342,23 @@ Languages:
                 if repo is None:
                     continue
                 name = repo.get("nameWithOwner")
-                if name in self._repos or name in self._exclude_repos:
+                if name in self._repos:
+                    continue
+                
+                # Check for exact repository match or username-only match
+                should_exclude = False
+                if name in self._exclude_repos:
+                    should_exclude = True
+                else:
+                    # Check if any username in exclude_repos matches this repository's owner
+                    for exclude_pattern in self._exclude_repos:
+                        if "/" not in exclude_pattern:  # This is a username-only pattern
+                            username = name.split("/")[0] if "/" in name else name
+                            if username == exclude_pattern:
+                                should_exclude = True
+                                break
+                
+                if should_exclude:
                     continue
                 self._repos.add(name)
                 self._stargazers += repo.get("stargazers").get("totalCount", 0)
