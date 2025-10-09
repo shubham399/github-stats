@@ -351,16 +351,17 @@ Languages:
                 if repo.get("isArchived", False):
                     continue
                 
-                # Check for exact repository match or username-only match
+                # Check for exact repository match or username-only match (case-insensitive)
                 should_exclude = False
-                if name in self._exclude_repos:
+                name_lower = name.lower()
+                if name_lower in {pattern.lower() for pattern in self._exclude_repos}:
                     should_exclude = True
                 else:
                     # Check if any username in exclude_repos matches this repository's owner
                     for exclude_pattern in self._exclude_repos:
                         if "/" not in exclude_pattern:  # This is a username-only pattern
                             username = name.split("/")[0] if "/" in name else name
-                            if username == exclude_pattern:
+                            if username.lower() == exclude_pattern.lower():
                                 should_exclude = True
                                 break
                 
